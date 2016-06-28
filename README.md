@@ -39,7 +39,7 @@ The system will begin with basic modelling features such as extrudes, combines w
     },
     "feature_2": {
       "type": "extrude",
-      "name": "extrude_1",
+      "name": "extrude_2",
       "distance": 10.0,
       "direction": [ 0.0, 1.0, 1.0]
     },
