@@ -43,8 +43,10 @@ def run(context):
     for n in data.keys():
       print(n)
 
-    for feature in data['features']:
-      print(n)
+    print('-------')
+
+    for feature in data['features'].keys():
+      print(data['features'][feature]['type'])
     
     # # Create sketch
     # sketches = rootComp.sketches
