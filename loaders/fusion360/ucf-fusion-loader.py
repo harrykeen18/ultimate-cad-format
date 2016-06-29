@@ -65,63 +65,56 @@ def run(context):
       # Import dxf file to root component
       importManager.importToTarget(dxf2dOptions, rootComp)
 
-      sketches = rootComp.sketches
-
-      for sketch in sketches:
+      # Rename sketch
+      for sketch in rootComp.sketches:
         if 'sketch' not in sketch.name:
           sketch.name = sketch_name
 
     # Extrude all extrusion features
-    for feature in data['features'].keys():
-      print(data['features'][feature]['type'])
+    for feature in data['features']:
+      feature = data['features'][feature]
 
-    # # Create sketch
-    # sketches = rootComp.sketches
-    # sketch = sketches.add(rootComp.xZConstructionPlane)
-    # sketchCircles = sketch.sketchCurves.sketchCircles
-    # centerPoint = adsk.core.Point3D.create(0, 0, 0)
-    # circle = sketchCircles.addByCenterRadius(centerPoint, 5.0)
-    
-    # # Get the profile defined by the circle
-    # prof = sketch.profiles.item(0)
+      if feature['type'] == 'extrude':
+        
+        # Run extrude
+        # Get base_sketch
+        for sketch in rootComp.sketches:
 
-    # # Create an extrusion input
-    # extrudes = rootComp.features.extrudeFeatures
-    # extInput = extrudes.createInput(prof, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-    
-    # # Define that the extent is a distance extent of 5 cm
-    # distance = adsk.core.ValueInput.createByReal(5)
-    # # Set the distance extent to be symmetric
-    # extInput.setDistanceExtent(True, distance)
-    # # Set the extrude to be a surface one
-    # extInput.isSolid = False
+          if sketch.name == feature['base_sketch']:
 
-    # # Create the extrusion
-    # ext = extrudes.add(extInput)
+            base_sketch = sketch
+            break
+
+        # Get profiles
+        # Create an object collection to use an input.
+        profiles = adsk.core.ObjectCollection.create()
+        
+        # Add all of the profiles to the collection.
+        for prof in base_sketch.profiles:
+          profiles.add(prof)
+
+        # Define Fusion type of extrude
+        # Currently only going to use new_bodies and then combines to get any subtraction
+
+        # Create extrusion input
+        extrudes = rootComp.features.extrudeFeatures
+        extInput = extrudes.createInput(profiles, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
     
-    # # Get the body created by the extrusion
-    # body = ext.bodies.item(0)
-    
-    # # Create another sketch
-    # sketchVertical = sketches.add(rootComp.yZConstructionPlane)
-    # sketchCirclesVertical = sketchVertical.sketchCurves.sketchCircles
-    # centerPointVertical = adsk.core.Point3D.create(0, 1, 0)
-    # cicleVertical = sketchCirclesVertical.addByCenterRadius(centerPointVertical, 0.5)
-    
-    # # Get the profile defined by the vertical circle
-    # profVertical = sketchVertical.profiles.item(0)
-    
-    # # Create an extrusion input
-    # extInput1 = extrudes.createInput(profVertical, adsk.fusion.FeatureOperations.JoinFeatureOperation)
-    
-    # # Define that the extent is one side to
-    # # Leave the direction determined automatically
-    # extInput1.setOneSideToExtent(body, False)
-    # # Define the taper angle of 4 degree
-    # extInput1.taperAngle = adsk.core.ValueInput.createByString('4 deg')
-    
-    # # Create the extrusion
-    # ext1 = extrudes.add(extInput1)
+        # Define distance of extrude
+        distance = adsk.core.ValueInput.createByReal(feature['distance'] / 10)
+        # Set the distance extent to be symmetric
+        extInput.setDistanceExtent(True, distance)
+
+        # Set the extrude to be a solid
+        # extInput.isSolid = True
+
+        # extent_def = adsk.fusion.ExtentDirections.PositiveExtentDirection
+
+        # Set direction
+        # extInput.setAllExtent(1)
+
+        # Create the extrusion
+        ext = extrudes.add(extInput)
 
   except:
     if ui:
