@@ -18,6 +18,8 @@ if not ADDIN_PATH in sys.path:
 import simplejson as json
 
 IMPORT = "/Users/harry/Documents/github/ultimate-cad-format/template.json"
+DIR_LOC = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/"
+SKETCHES_LOC = DIR_LOC + "sketches/"
 
 def run(context):
   
@@ -25,6 +27,9 @@ def run(context):
 
     app = adsk.core.Application.get()
     ui = app.userInterface
+
+    # Get import manager
+    importManager = app.importManager
 
     # Create a document.
     #doc = app.documents.add(adsk.core.DocumentTypes.FusionDesignDocumentType)
@@ -40,14 +45,29 @@ def run(context):
 
     print(json.dumps(data, sort_keys=True, indent=4 * ' '))
 
-    for n in data.keys():
-      print(n)
+    # for n in data.keys():
+    #   print(n)
 
-    print('-------')
+    # print('-------')
 
-    for feature in data['features'].keys():
-      print(data['features'][feature]['type'])
-    
+    # for feature in data['features'].keys():
+    #   print(data['features'][feature]['type'])
+
+    # Import all sketches
+
+    for sketch in data['sketches']:
+      print(data['sketches'][sketch]['name'])
+      
+      # Get dxf2d import options
+      dxf2dFileName = SKETCHES_LOC + data['sketches'][sketch]['name'] + '.dxf'#'sketch_2.dxf'
+      
+      # returnValue = importManager_var.createDXF2DImportOptions(filename, planarEntity)
+      dxf2dOptions = importManager.createDXF2DImportOptions(dxf2dFileName, rootComp.xYConstructionPlane)
+      
+      # Import dxf file to root component
+      importManager.importToTarget(dxf2dOptions, rootComp)
+
+
     # # Create sketch
     # sketches = rootComp.sketches
     # sketch = sketches.add(rootComp.xZConstructionPlane)
