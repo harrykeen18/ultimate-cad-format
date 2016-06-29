@@ -43,7 +43,7 @@ def run(context):
     with open(IMPORT) as data_file:    
       data = json.load(data_file)
 
-    print(json.dumps(data, sort_keys=True, indent=4 * ' '))
+    # print(json.dumps(data, sort_keys=True, indent=4 * ' '))
 
     # for n in data.keys():
     #   print(n)
@@ -54,19 +54,26 @@ def run(context):
     #   print(data['features'][feature]['type'])
 
     # Import all sketches
-
     for sketch in data['sketches']:
-      print(data['sketches'][sketch]['name'])
+      sketch_name = data['sketches'][sketch]['name']
       
       # Get dxf2d import options
-      dxf2dFileName = SKETCHES_LOC + data['sketches'][sketch]['name'] + '.dxf'#'sketch_2.dxf'
-      
+      sketch_loc = SKETCHES_LOC + sketch_name + '.dxf'#'sketch_2.dxf'
       # returnValue = importManager_var.createDXF2DImportOptions(filename, planarEntity)
-      dxf2dOptions = importManager.createDXF2DImportOptions(dxf2dFileName, rootComp.xYConstructionPlane)
+      dxf2dOptions = importManager.createDXF2DImportOptions(sketch_loc, rootComp.xYConstructionPlane)
       
       # Import dxf file to root component
       importManager.importToTarget(dxf2dOptions, rootComp)
 
+      sketches = rootComp.sketches
+
+      for sketch in sketches:
+        if 'sketch' not in sketch.name:
+          sketch.name = sketch_name
+
+    # Extrude all extrusion features
+    for feature in data['features'].keys():
+      print(data['features'][feature]['type'])
 
     # # Create sketch
     # sketches = rootComp.sketches
@@ -116,9 +123,8 @@ def run(context):
     # # Create the extrusion
     # ext1 = extrudes.add(extInput1)
 
-
   except:
     if ui:
-    #print('Failed:\n{}'.format(traceback.format_exc()))
-      ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
+      print('Failed:\n{}'.format(traceback.format_exc()))
+      #ui.messageBox('Failed:\n{}'.format(traceback.format_exc()))
 
