@@ -6,8 +6,8 @@
       "location": "/sketches/sketch_1"
     },
     "sketch_2": {
-      "name": "sketch_2",
-      "location": "/sketches/sketch_2"
+      "name": "sketch_4",
+      "location": "/sketches/sketch_4"
     }
   },
   "features": {
@@ -21,7 +21,7 @@
     "feature_2": {
       "type": "extrude",
       "name": "extrude_2",
-      "base_sketch": "sketch_2",
+      "base_sketch": "sketch_4",
       "distance": 10.0,
       "direction": [ 0.0, 1.0, 1.0]
     },
