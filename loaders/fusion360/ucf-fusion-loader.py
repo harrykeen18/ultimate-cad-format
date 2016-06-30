@@ -17,7 +17,7 @@ if not ADDIN_PATH in sys.path:
 
 import simplejson as json
 
-IMPORT = "/Users/harry/Documents/github/ultimate-cad-format/template.json"
+IMPORT = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/leg.json"
 DIR_LOC = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/"
 SKETCHES_LOC = DIR_LOC + "sketches/"
 
@@ -99,7 +99,8 @@ def run(context):
         # Create extrusion input
         extrudes = rootComp.features.extrudeFeatures
         extInput = extrudes.createInput(profiles, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
-    
+        # extInput = extrudes.createInput(profiles, adsk.fusion.FeatureOperations.JoinFeatureOperation)
+
         # Define distance of extrude
         distance = adsk.core.ValueInput.createByReal(feature['distance'])
         # Set the distance extent to be symmetric
@@ -136,7 +137,8 @@ def run(context):
         
         # Add all of the tool_bodies to the collection.
         for body in rootComp.bRepBodies:
-          if body.name == feature['solid_2']:
+          # if body.name == feature['solid_2']:
+          if feature['solid_2'] in body.name:
             tool_bodies.add(body)
 
         # Create combine input
@@ -152,9 +154,12 @@ def run(context):
         # Create the extrusion
         comb = combines.add(combInput)
 
-        for body in rootComp.bRepBodies:
-          if body.name == target_body.name:
-            body.name = feature['name']
+        # Was going to rename but actually target body may have other combine features applied to it.
+        # for body in rootComp.bRepBodies:
+        #   if body.name == target_body.name:
+        #     body.name = feature['name'] 
+
+    # 28160 mm / 1108mm = 25.4 -> need to scale down to mm
 
   except:
     if ui:
