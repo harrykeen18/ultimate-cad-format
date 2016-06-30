@@ -1,0 +1,58 @@
+{
+  "units": "millimeters",
+  "sketches": {
+    "sketch_1": {
+      "name": "LEG_12_POCKETS_sketch",
+      "location": "/sketches/sketch_1"
+    },
+    "sketch_2": {
+      "name": "LEG_18_HOLES_sketch",
+      "location": "/sketches/sketch_4"
+    },
+    "sketch_3": {
+      "name": "LEG_OUTER_sketch",
+      "location": "/sketches/sketch_4"
+    }
+  },
+  "features": {
+    "feature_1": {
+      "type": "extrude",
+      "name": "extrude_1",
+      "base_sketch": "LEG_OUTER_sketch",
+      "distance": 18.0,
+      "direction": [ 0.0, 0.0, 1.0]
+    },
+    "feature_2": {
+      "type": "extrude",
+      "name": "extrude_2",
+      "base_sketch": "LEG_12_POCKETS_sketch",
+      "distance": 12.0,
+      "direction": [ 0.0, 1.0, 1.0]
+    },
+    "feature_3": {
+      "type": "extrude",
+      "name": "extrude_3",
+      "base_sketch": "LEG_18_HOLES_sketch",
+      "distance": 14.0,
+      "direction": [ 0.0, 1.0, 1.0]
+    },
+    "feature_4": {
+      "type": "combine",
+      "name": "combine_1",
+      "solid_1": "extrude_1",
+      "solid_2": "extrude_2",
+      "union": false,
+      "intersect": false,
+      "cut": true
+    },
+    "feature_5": {
+      "type": "combine",
+      "name": "combine_2",
+      "solid_1": "extrude_1",
+      "solid_2": "extrude_3",
+      "union": false,
+      "intersect": false,
+      "cut": true
+    }
+  }
+}
