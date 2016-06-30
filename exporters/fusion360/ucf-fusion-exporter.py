@@ -74,8 +74,8 @@ def run(context):
       target_body = combine.targetBody
       json_feature['solid_1'] = target_body.name
 
-      # Get 'extrude_X' string of tool body - may need to do some regexing to get rid of end number
       tool_bodies = combine.toolBodies
+      # Get 'extrude_X' string of tool body - may need to do some regexing to get rid of end number
       json_feature['solid_2'] = tool_bodies.item(0).name
 
       # Set all operation types to false
@@ -93,7 +93,28 @@ def run(context):
 
       json_export['features'][feature_key] = json_feature
 
-    #print(json.dumps(json_export, sort_keys=True, indent=2 * ' '))
+    # print(json.dumps(json_export, sort_keys=True, indent=2 * ' '))
+
+    for extrude in features.extrudeFeatures:
+
+      #   "feature_1": {
+      #   "type": "extrude",
+      #   "name": "extrude_1",
+      #   "base_sketch": "LEG_OUTER_sketch",
+      #   "distance": 18.0,
+      #   "direction": [ 0.0, 0.0, 1.0]
+      # },
+
+      feature_ind += 1
+      combine_ind += 1
+
+      feature_key = 'feature_' + str(feature_ind)
+      json_feature = {feature_key: {}}
+
+      json_feature['type'] = 'extrude'
+      json_feature['name'] = 'extrude_' + str(combine_ind)
+
+      name = extrude.profile.parentSketch.name
 
 
   except:
