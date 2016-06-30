@@ -108,10 +108,8 @@ def run(context):
         # Set the extrude to be a solid
         # extInput.isSolid = True
 
-        # extent_def = adsk.fusion.ExtentDirections.PositiveExtentDirection
-
         # Set direction
-        # extInput.setAllExtent(1)
+        extInput.setAllExtent = 1
 
         # Create the extrusion
         ext = extrudes.add(extInput)
@@ -119,6 +117,43 @@ def run(context):
         # Rename sketch
         for body in rootComp.bRepBodies:
           if 'extrude' not in body.name:
+            body.name = feature['name']
+
+    # Apply combines
+    for feature in data['features']:
+      feature = data['features'][feature]
+
+      if feature['type'] == 'combine':
+
+        # Define target_body
+        for body in rootComp.bRepBodies:
+          if body.name == feature['solid_1']:
+            target_body = body
+
+        # Get tool_bodies
+        # Create an object collection to use an input.
+        tool_bodies = adsk.core.ObjectCollection.create()
+        
+        # Add all of the tool_bodies to the collection.
+        for body in rootComp.bRepBodies:
+          if body.name == feature['solid_2']:
+            tool_bodies.add(body)
+
+        # Create combine input
+        combines = rootComp.features.combineFeatures
+        combInput = combines.createInput(target_body, tool_bodies)
+
+        # Keep tool bodies
+        combInput.isKeepToolBodies = False
+
+        # Cut operation
+        combInput.operation = 1
+
+        # Create the extrusion
+        comb = combines.add(combInput)
+
+        for body in rootComp.bRepBodies:
+          if body.name == target_body.name:
             body.name = feature['name']
 
   except:
