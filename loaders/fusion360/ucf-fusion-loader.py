@@ -101,9 +101,9 @@ def run(context):
         extInput = extrudes.createInput(profiles, adsk.fusion.FeatureOperations.NewBodyFeatureOperation)
     
         # Define distance of extrude
-        distance = adsk.core.ValueInput.createByReal(feature['distance'] / 10)
+        distance = adsk.core.ValueInput.createByReal(feature['distance'])
         # Set the distance extent to be symmetric
-        extInput.setDistanceExtent(True, distance)
+        extInput.setDistanceExtent(False, distance)
 
         # Set the extrude to be a solid
         # extInput.isSolid = True
@@ -115,6 +115,11 @@ def run(context):
 
         # Create the extrusion
         ext = extrudes.add(extInput)
+
+        # Rename sketch
+        for body in rootComp.bRepBodies:
+          if 'extrude' not in body.name:
+            body.name = feature['name']
 
   except:
     if ui:
