@@ -1,6 +1,8 @@
 # Manifesto
 
-Proprietry CAD formats suck. Transferring data from one system to another is based in the dark ages. The best current solution is to transfer models via dumb solid formats such as `.stp` or `.iges`. It's time we did something about it. This format will be:
+Collaborative CAD design between remote designers such as those in the [Opendesk](www.opendesk.cc) network using different CAD systems is currenly very difficult. Proprietry formats inhibit intelligent model sharing and git versioning.
+
+So we're all agreed, proprietry CAD formats suck. Transferring data from one system to another is based in the dark ages. The best current solution is to transfer models via dumb solid formats such as `.stp` or `.iges`. It's time we did something about it. The new ***Ultimate CAD Format*** will be:
 
 * universal
 * opensource
