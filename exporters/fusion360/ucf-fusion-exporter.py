@@ -5,7 +5,7 @@
 
 #ucf-fusion-loader.
 #Author-Harry Keen
-#Description-Fusion360 addin to load and build ultimate CAD format json files.
+#Description-Fusion360 addin to export ultimate CAD format json files.
 
 import adsk.core, adsk.fusion, adsk.cam, traceback
 
@@ -43,6 +43,8 @@ def run(context):
     # Get the root component of the active design
     rootComp = design.rootComponent
     features = rootComp.features
+
+    # Might have to set the "timeline" back to zero.
 
     # Set top level dict
     json_export = {'units': '', 'sketches': {}, 'features': {}}
@@ -93,8 +95,6 @@ def run(context):
 
       json_export['features'][feature_key] = json_feature
 
-    # print(json.dumps(json_export, sort_keys=True, indent=2 * ' '))
-
     for extrude in features.extrudeFeatures:
 
       #   "feature_1": {
@@ -113,9 +113,25 @@ def run(context):
 
       json_feature['type'] = 'extrude'
       json_feature['name'] = 'extrude_' + str(combine_ind)
+      
+      profile = extrude.profile
 
-      name = extrude.profile.parentSketch.name
+      if type(profile) == adsk.core.ObjectCollection:
+        sketch = profile.item(0).parentSketch
+      else:
+        sketch = profile.parentSketch
+      
+      json_feature['base_sketch'] = sketch.name
 
+      json_feature['distance'] = 10 * extrude.extentDefinition.distance.value
+
+      direction = sketch.referencePlane.geometry.normal.asArray()
+      json_feature['direction'] = direction
+
+      json_export['features'][feature_key] = json_feature
+
+
+    print(json.dumps(json_export, sort_keys=True, indent=2 * ' '))
 
   except:
     if ui:
