@@ -22,10 +22,9 @@ if not ADDIN_PATH in sys.path:
 
 import simplejson as json
 
-IMPORT = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/leg.json"
-EXPORT = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/leg_export.json"
-DIR_LOC = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/"
-SKETCHES_LOC = DIR_LOC + "sketches/"
+IMPORT = ADDIN_PATH + "/leg.json"
+EXPORT = ADDIN_PATH + "/leg_export.json"
+SKETCHES_LOC = ADDIN_PATH + "/sketches/"
 
 def run(context):
   
@@ -47,10 +46,49 @@ def run(context):
     # Might have to set the "timeline" back to zero.
 
     # Set top level dict
-    json_export = {'units': '', 'sketches': {}, 'features': {}}
+    json_export = {'units': 'millimeters', 'sketches': {}, 'features': {}}
 
     feature_ind = 0
     combine_ind = 0
+    sketch_ind = 0
+
+    for extrude in features.extrudeFeatures:
+
+      #   "feature_1": {
+      #   "type": "extrude",
+      #   "name": "extrude_1",
+      #   "base_sketch": "LEG_OUTER_sketch",
+      #   "distance": 18.0,
+      #   "direction": [ 0.0, 0.0, 1.0]
+      # },
+
+      feature_ind += 1
+      combine_ind += 1
+
+      feature_key = 'feature_' + str(feature_ind)
+      json_feature = {}
+
+      json_feature['type'] = 'extrude'
+      
+      extrude.bodies.item(0).name = 'extrude_' + str(combine_ind)
+      json_feature['name'] = 'extrude_' + str(combine_ind)
+      
+      profile = extrude.profile
+
+      if type(profile) == adsk.core.ObjectCollection:
+        sketch = profile.item(0).parentSketch
+      else:
+        sketch = profile.parentSketch
+      
+      json_feature['base_sketch'] = sketch.name
+
+      json_feature['distance'] = 10 * extrude.extentDefinition.distance.value
+
+      direction = sketch.referencePlane.geometry.normal.asArray()
+      json_feature['direction'] = direction
+
+      json_export['features'][feature_key] = json_feature
+
 
     for combine in features.combineFeatures:
 
@@ -68,7 +106,7 @@ def run(context):
       combine_ind += 1
 
       feature_key = 'feature_' + str(feature_ind)
-      json_feature = {feature_key: {}}
+      json_feature = {}
 
       json_feature['type'] = 'combine'
       json_feature['name'] = 'combine_' + str(combine_ind)
@@ -95,43 +133,36 @@ def run(context):
 
       json_export['features'][feature_key] = json_feature
 
-    for extrude in features.extrudeFeatures:
+    for sketch in rootComp.sketches:
 
-      #   "feature_1": {
-      #   "type": "extrude",
-      #   "name": "extrude_1",
-      #   "base_sketch": "LEG_OUTER_sketch",
-      #   "distance": 18.0,
-      #   "direction": [ 0.0, 0.0, 1.0]
+      #   "sketch_1": {
+      #   "name": "LEG_12_POCKETS_sketch",
+      #   "location": "/sketches/sketch_1"
       # },
 
-      feature_ind += 1
-      combine_ind += 1
+      sketch_ind += 1
 
-      feature_key = 'feature_' + str(feature_ind)
-      json_feature = {feature_key: {}}
+      sketch_key = 'sketch_' + str(sketch_ind)
+      json_sketch = {}
 
-      json_feature['type'] = 'extrude'
-      json_feature['name'] = 'extrude_' + str(combine_ind)
-      
-      profile = extrude.profile
+      json_sketch['name'] = sketch.name
 
-      if type(profile) == adsk.core.ObjectCollection:
-        sketch = profile.item(0).parentSketch
-      else:
-        sketch = profile.parentSketch
-      
-      json_feature['base_sketch'] = sketch.name
+      json_sketch['location'] = 'sketches/' + sketch.name
 
-      json_feature['distance'] = 10 * extrude.extentDefinition.distance.value
+      # add sketch to json_export
 
-      direction = sketch.referencePlane.geometry.normal.asArray()
-      json_feature['direction'] = direction
+      json_export['sketches'][sketch_key] = json_sketch
 
-      json_export['features'][feature_key] = json_feature
+      # Actually save out the skecth profile as a dxf.
+      sketch.saveAsDXF(SKETCHES_LOC + sketch.name + '.dxf')
 
 
     print(json.dumps(json_export, sort_keys=True, indent=2 * ' '))
+
+    with open(EXPORT, 'w') as outfile:
+      # data = json.dumps(json_export, sort_keys=True, indent=2 * ' ')
+      json.dump(json_export, outfile, indent=2 * ' ')
+
 
   except:
     if ui:

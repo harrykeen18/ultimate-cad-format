@@ -12,7 +12,7 @@ So we're all agreed, proprietry CAD formats suck. Transferring data from one sys
 * opensource
 * `json` format (see /template.json or below)
 
-Almost all CAD systems have api calls that run modelling commands. This format defines system that describes a "history tree" of modelling features and their base skecth geometry. This can be read by addins unique to each CAD system to construct an "inteligent" model of features from scratch.
+Almost all CAD systems have api calls that run modelling commands. This format defines system that describes a "history tree" of modelling features and their base skecth geometry. This can be read by addins unique to each CAD system to construct an "intelligent" model of features from scratch.
 
 This system relies on the development of individual:
 

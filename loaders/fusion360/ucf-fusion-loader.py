@@ -17,9 +17,8 @@ if not ADDIN_PATH in sys.path:
 
 import simplejson as json
 
-IMPORT = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/leg.json"
-DIR_LOC = "/Users/harry/Documents/github/ultimate-cad-format/loaders/fusion360/"
-SKETCHES_LOC = DIR_LOC + "sketches/"
+IMPORT = ADDIN_PATH + "/leg_export.json"
+SKETCHES_LOC = ADDIN_PATH + "/sketches/"
 
 def run(context):
   

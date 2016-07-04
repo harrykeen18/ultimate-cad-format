@@ -1,0 +1,46 @@
+{
+  "units": "millimeters",
+  "sketches": {
+    "sketch_1": {
+      "location": "sketches/square-sketch",
+      "name": "square-sketch"
+    },
+    "sketch_2": {
+      "location": "sketches/circle-sketch",
+      "name": "circle-sketch"
+    }
+  },
+  "features": {
+    "feature_1": {
+      "type": "extrude",
+      "base_sketch": "square-sketch",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "name": "extrude_1",
+      "distance": -40.0
+    },
+    "feature_2": {
+      "type": "extrude",
+      "base_sketch": "circle-sketch",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "name": "extrude_2",
+      "distance": -20.0
+    },
+    "feature_3": {
+      "type": "combine",
+      "intersect": false,
+      "union": false,
+      "cut": true,
+      "solid_1": "extrude_1",
+      "name": "combine_3",
+      "solid_2": "extrude_2"
+    }
+  }
+}
